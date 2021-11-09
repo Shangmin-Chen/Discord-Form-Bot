@@ -45,8 +45,9 @@ def update_del(index):
   if len(database) > index:
     del database[index]
     db["database"] = database
+    return 0
   else:
-    return
+    return 1
 
 
 @client.event
@@ -65,7 +66,7 @@ async def on_message(message):
     await message.channel.send("You are " + str(message.author))
   
   if msg.startswith("$help"):
-    await message.channel.send("Commands\n\n$whoami | check your discord tag\n\n$append Firstname Lastname Email School | add yourself to the list\n\nList of schools:\nsiths\nndhs\n\n$remove index_number | remove yourself from the list\n\n$clear | clear the list *caution*\n\n$show | show the list")
+    await message.channel.send("Commands\n\n$whoami | check your discord tag\n\n$append Firstname Lastname Email School | add yourself to the list\n\nList of schools:\nsiths\nndhs\n\n$remove index_number | remove yourself from the list, list starts at number 1\n\n$clear | clear the list *caution*\n\n$show | show the list")
 
   if msg.startswith("$run"):
     database = db["database"]
@@ -84,9 +85,11 @@ async def on_message(message):
   if msg.startswith("$remove"):
     if "database" in db.keys():
       index = int(msg.split()[1])
-      update_del(index)
-      database = db["database"]
-      await message.channel.send("Removed!\n" + str(database))
+      if update_del((index - 1)) == 0:
+        database = db["database"]
+        await message.channel.send("Removed!\n" + str(database))
+      elif update_del((index - 1)) == 1:
+        await message.channel.send("Index_Number is above the list. Try again.")
 
   if msg.startswith("$clear"):
     db.clear()
