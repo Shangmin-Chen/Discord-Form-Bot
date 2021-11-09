@@ -46,7 +46,7 @@ def update_del(index):
     del database[index]
     db["database"] = database
   else:
-    return 1
+    return
 
 
 @client.event
@@ -82,7 +82,7 @@ async def on_message(message):
     await message.channel.send("Added!\n" + str(db["database"]))
 
   if msg.startswith("$remove"):
-    if "databse" in db.keys():
+    if "database" in db.keys():
       index = int(msg.split()[1])
       update_del(index)
       database = db["database"]
