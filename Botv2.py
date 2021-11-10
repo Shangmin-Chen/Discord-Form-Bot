@@ -25,7 +25,6 @@ def RUN(email, fname, lname, school):
 
 def execute(list):
   for i in range(len(list)):
-
     if list[i][3] == "siths".lower():
       school = "R605"
     if list[i][3] == "ndhs".lower():
@@ -34,4 +33,4 @@ def execute(list):
 
 
 end = time()
-total_run_time = (end - start).__round__(4)
+total_run_time = (end - start).__round__(5)
