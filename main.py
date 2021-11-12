@@ -15,18 +15,18 @@ async def loop():
   while True:
     database = db["database"]
     est = pytz.timezone('US/Eastern')
-    if datetime.datetime.today().weekday() < 5:
-      now = datetime.datetime.now().astimezone(est)
-      current_time = now.strftime("%H")
+    weekday = datetime.datetime.today().weekday()
+    now = datetime.datetime.now().astimezone(est)
+    current_time = now.strftime("%H")
+
+    if int(weekday) < 5:
       if current_time == "07":
-        Botv2.execute(database)
+        total_time = Botv2.execute(database)
         channel = client.get_channel(428729686185476097)
-        await channel.send("Rise and Shine! It's 7 AM!\n" + "Total Run Time: " + str(Botv2.total_run_time) + " Seconds.")
+        await channel.send("Rise and Shine! It's 7 AM!\n" + "Total Run Time: " + str(total_time) + " Seconds.")
         await asyncio.sleep(3600)
-      else:
-        await asyncio.sleep(60)
-    else:
-      await asyncio.sleep(60)
+        
+    await asyncio.sleep(60)
 
 
 def update_add(fname, lname, email, school):
@@ -69,9 +69,10 @@ async def on_message(message):
     await message.channel.send("Commands\n\n$whoami | check your discord tag\n\n$append Firstname Lastname Email School | add yourself to the list\n\nList of schools:\nsiths\nndhs\n\n$remove index_number | remove yourself from the list, list starts at number 1\n\n$clear | clear the list *caution*\n\n$show | show the list\n\n$sysshow | show the list system like")
 
   if msg.startswith("$run"):
+    await message.channel.send("Running...")
     database = db["database"]
-    Botv2.execute(database)
-    await message.channel.send("Finished!\nTotal Run Time: " + str(Botv2.total_run_time) + " Seconds")
+    total_time = Botv2.execute(database)
+    await message.channel.send("Finished!\nTotal Run Time: " + str(total_time) + " Seconds")
 
   if msg.startswith("$append"):
     fname = msg.split()[1]
