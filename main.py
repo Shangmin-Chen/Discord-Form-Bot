@@ -52,6 +52,9 @@ def update_del(index):
 
 @client.event
 async def on_ready():
+  activity = discord.Game(name="$help", type=3)
+  await client.change_presence(status=discord.Status.idle, activity=activity)
+
   print("We have logged in as {0.user}"
   .format(client))
 
