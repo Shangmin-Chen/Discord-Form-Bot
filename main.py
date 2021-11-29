@@ -8,26 +8,37 @@ import pytz
 import datetime
 
 token = os.environ['TOKEN']
-
 client = discord.Client()
 
 async def loop():
+  counter = 1
   while True:
     database = db["database"]
     est = pytz.timezone('US/Eastern')
     weekday = datetime.datetime.today().weekday()
     now = datetime.datetime.now().astimezone(est)
     current_time = now.strftime("%H")
-
     if int(weekday) < 5:
       if current_time == "07":
-        total_time = Botv2.execute(database)
-        channel = client.get_channel(428729686185476097)
-        await channel.send("Rise and Shine! It's 7 AM!\n" + "Total Run Time: " + str(total_time) + " Seconds.")
-        await asyncio.sleep(3600)
-        
-    await asyncio.sleep(60)
-
+        if counter == 0:
+          total_time = Botv2.execute(database)
+          channel = client.get_channel(428729686185476097)
+          await channel.send("Rise and Shine! It's 7 AM!\n" + "Total Run Time: " + str(total_time) + " Seconds.")
+          counter = 1
+          await asyncio.sleep(30)
+          print("running")
+        else:
+          await asyncio.sleep(30)
+          print("on cool down")
+      else:
+        counter = 0
+        await asyncio.sleep(30)
+        print("condition not met")
+    
+    if counter == 0:
+      print("ready")
+    if counter == 1:
+      print("not ready")
 
 def update_add(fname, lname, email, school):
   if "database" in db.keys():
