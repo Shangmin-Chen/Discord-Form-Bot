@@ -25,19 +25,18 @@ async def loop():
           channel = client.get_channel(428729686185476097)
           await channel.send("Rise and Shine! It's 7 AM!\n" + "Total Run Time: " + str(total_time) + " Seconds.")
           counter = 1
-          await asyncio.sleep(30)
           print("running")
         else:
-          await asyncio.sleep(30)
           print("on cool down")
       else:
         counter = 0
-        await asyncio.sleep(30)
         print("condition not met")
     
     if counter == 0:
+      await asyncio.sleep(30)
       print("ready")
     if counter == 1:
+      await asyncio.sleep(30)
       print("not ready")
 
 def update_add(fname, lname, email, school):
