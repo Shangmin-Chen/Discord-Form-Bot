@@ -6,6 +6,7 @@ from keep_alive import keep_alive
 import asyncio
 import pytz
 import datetime
+import api
 
 token = os.environ['TOKEN']
 client = discord.Client()
@@ -13,25 +14,44 @@ client = discord.Client()
 async def loop():
   counter = 1
   while True:
-    database = db["database"]
     est = pytz.timezone('US/Eastern')
-    weekday = datetime.datetime.today().weekday()
     now = datetime.datetime.now().astimezone(est)
     current_time = now.strftime("%H")
-    if int(weekday) < 5:
-      if current_time == "07":
-        if counter == 0:
-          total_time = Botv2.execute(database)
-          channel = client.get_channel(428729686185476097)
-          await channel.send("Rise and Shine! It's 7 AM!\n" + "Total Run Time: " + str(total_time) + " Seconds.")
-          counter = 1
-          print("running")
-        else:
-          print("on cool down")
-      else:
+    database = db["database"]
+    if api.connect_check() == 0:
+      # connected
+      if api.status_check() == 1:
+        # checks if theres school
+        print("no school")
+        # make counter 0 so if it's 7 on a school day it can run
         counter = 0
-        print("condition not met")
-    
+      elif api.status_check() == 0:
+        # if theres school
+        if current_time == "07":
+          # if it's 7am
+          if counter == 0:
+            # if its ready
+            total_time = Botv2.execute(database)
+            channel = client.get_channel(428729686185476097)
+            await channel.send("Rise and Shine! It's 7 AM!\n" + "Total Run Time: " + str(total_time) + " Seconds.")
+            # counter = 1 to make it on cool down
+            counter = 1
+            print("running")
+          else:
+            # it's still 7am and it's counter = 1
+            print("on cool down")
+        else:
+          # it's no longer 7am and now counter is 0, it's ready to go once time hits 7 again.
+          counter = 0
+          print("condition not met")
+
+    elif api.connect_check() == 111:
+      # if api doesn't work
+      await channel.send("<@249632647473659904> API IS DOWN!!!")
+      # force shutdown
+      exit()
+
+    # checking for counting.
     if counter == 0:
       await asyncio.sleep(30)
       print("ready")
@@ -79,7 +99,7 @@ async def on_message(message):
     await message.channel.send("You are " + str(message.author))
   
   if msg.startswith("$help"):
-    await message.channel.send("Commands\n\n$whoami | check your discord tag\n\n$append Firstname Lastname Email School | add yourself to the list\n\nList of schools:\nsiths\nndhs\n\n$remove index_number | remove yourself from the list, list starts at number 1\n\n$clear | clear the list *caution*\n\n$show | show the list\n\n$sysshow | show the list system like")
+    await message.channel.send("Commands\n\n$whoami | check your discord tag\n\n$append Firstname Lastname Email School | add yourself to the list\n\nList of schools:\nsiths\nndhs\n\n$remove index_number | remove yourself from the list, list starts at number 1\n\n$clear | clear the list *caution*\n\n$show | show the list\n\n$sysshow | show the list system like\n\n$FORCESTOP | Shutdown Bot in case of error")
 
   if msg.startswith("$run"):
     await message.channel.send("Running...")
@@ -122,6 +142,11 @@ async def on_message(message):
   if msg.startswith("$sysshow"):
     database = db["database"]
     await message.channel.send(str(database))
+  
+  if msg.startswith("$FORCESTOP"):
+    await message.channel.send("<@249632647473659904> Going offline")
+    print("shutdown")
+    exit()
       
 keep_alive()
 client.loop.create_task(loop())
