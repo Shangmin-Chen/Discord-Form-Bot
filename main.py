@@ -15,7 +15,11 @@ async def loop():
   cool_down = 0
   channel = client.get_channel(428729686185476097)
   while True:
-    database = db["database"]
+    try:
+      database = db["database"]
+    except:
+      await channel.send("<@249632647473659904> Database Error")
+      exit()
     if check_seven() == 0:
       # it's 7
       if api.connect_check() == 0:
@@ -23,7 +27,7 @@ async def loop():
         if api.status_check() == 1:
           print("no school")
           # checks if theres school
-          await channel.send("No school today because of {}".format(api.reason))
+          await channel.send("No school: {}".format(api.reason))
         elif api.status_check() == 0:
           if cool_down == 0:
             total_time = Botv2.execute(database)
@@ -33,7 +37,7 @@ async def loop():
             cool_down = 1
       elif api.connect_check() == 111:
         # if api doesn't work, didn't connect
-        await channel.send("<@249632647473659904> API IS DOWN!!!")
+        await channel.send("<@249632647473659904> API IS DOWN")
         # force shutdown
         exit()
     else:
@@ -92,7 +96,7 @@ async def on_message(message):
     await message.channel.send("You are " + str(message.author))
   
   if msg.startswith("$help"):
-    await message.channel.send("Commands\n\n$whoami | check your discord tag\n\n$append Firstname Lastname Email School | add yourself to the list\n\nList of schools:\nsiths\nndhs\n\n$remove index_number | remove yourself from the list, list starts at number 1\n\n$clear | clear the list *caution*\n\n$show | show the list\n\n$sysshow | show the list system like\n\n$FORCESTOP | Shutdown Bot in case of error")
+    await message.channel.send("\nCommands\n\n$whoami | check your discord tag\n\n$append Firstname Lastname Email School | add yourself to the list\n\nList of schools:\nsiths\nndhs\n\n$remove index_number | remove yourself from the list, list starts at number 1\n\n$clear | clear the list *caution*\n\n$show | show the list\n\n$sysshow | show the list system like\n\n$FORCESTOP | Shutdown Bot in case of error")
 
   if msg.startswith("$run"):
     await message.channel.send("Running...")
@@ -127,10 +131,12 @@ async def on_message(message):
 
   if msg.startswith("$show"):
     database = db["database"]
-    await message.channel.send("Here's the list!")
+    organized_list = []
     for i in range(len(database)):
       num = i + 1
-      await message.channel.send(str(num) + ". " + database[i][0].capitalize() + " " + database[i][1].capitalize() + ", " + database[i][2] + ", " + database[i][3])
+      msg = str(num) + ". " + database[i][0].capitalize() + " " + database[i][1].capitalize() + ", " + database[i][2] + ", " + database[i][3]
+      organized_list.append(msg)
+    await message.channel.send("Here's the list!\n" + ("\n".join(organized_list)))
 
   if msg.startswith("$sysshow"):
     database = db["database"]

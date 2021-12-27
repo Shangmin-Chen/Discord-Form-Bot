@@ -12,7 +12,7 @@ r = requests.get("https://api.nyc.gov/public/api/GetCalendar?fromdate={}&todate=
 
 data = json.loads(r.text)
 status = data["days"][0]["items"][2]["status"]
-reason = data["days"][0]["items"][2]["exceptionName"]
+reason = data["days"][0]["items"][2]["details"]
 
 def connect_check():
   if r.status_code == 200:
