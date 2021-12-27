@@ -4,60 +4,53 @@ import Botv2
 from replit import db
 from keep_alive import keep_alive
 import asyncio
-import pytz
-import datetime
+from checking_time import check_seven
 import api
 
 token = os.environ['TOKEN']
 client = discord.Client()
 
 async def loop():
-  counter = 1
+  # Constant or init variables
+  cool_down = 0
+  channel = client.get_channel(428729686185476097)
   while True:
-    est = pytz.timezone('US/Eastern')
-    now = datetime.datetime.now().astimezone(est)
-    current_time = now.strftime("%H")
     database = db["database"]
-    if api.connect_check() == 0:
-      # connected
-      if api.status_check() == 1:
-        # checks if theres school
-        print("no school")
-        # make counter 0 so if it's 7 on a school day it can run
-        counter = 0
-      elif api.status_check() == 0:
-        # if theres school
-        if current_time == "07":
-          # if it's 7am
-          if counter == 0:
-            # if its ready
+    if check_seven() == 0:
+      # it's 7
+      if api.connect_check() == 0:
+        # check connection
+        if api.status_check() == 1:
+          print("no school")
+          # checks if theres school
+          await channel.send("No school today because of {}".format(api.reason))
+        elif api.status_check() == 0:
+          if cool_down == 0:
             total_time = Botv2.execute(database)
-            channel = client.get_channel(428729686185476097)
             await channel.send("Rise and Shine! It's 7 AM!\n" + "Total Run Time: " + str(total_time) + " Seconds.")
-            # counter = 1 to make it on cool down
-            counter = 1
             print("running")
-          else:
-            # it's still 7am and it's counter = 1
-            print("on cool down")
-        else:
-          # it's no longer 7am and now counter is 0, it's ready to go once time hits 7 again.
-          counter = 0
-          print("condition not met")
+            # make it go on cooldown
+            cool_down = 1
+      elif api.connect_check() == 111:
+        # if api doesn't work, didn't connect
+        await channel.send("<@249632647473659904> API IS DOWN!!!")
+        # force shutdown
+        exit()
+    else:
+      print("not 7")
 
-    elif api.connect_check() == 111:
-      # if api doesn't work
-      await channel.send("<@249632647473659904> API IS DOWN!!!")
-      # force shutdown
-      exit()
-
-    # checking for counting.
-    if counter == 0:
-      await asyncio.sleep(30)
+    if cool_down == 0:
       print("ready")
-    if counter == 1:
-      await asyncio.sleep(30)
-      print("not ready")
+      await asyncio.sleep(60)
+    elif cool_down == 1:
+      if check_seven() == 1:
+        # this makes sure that the code runs once at 7, and goes into cooldown and once it's not 7, it's available again.
+        cool_down = 0
+        print("no longer 7")
+        await asyncio.sleep(60)
+      else:
+        print("not ready")
+        await asyncio.sleep(60)
 
 def update_add(fname, lname, email, school):
   if "database" in db.keys():

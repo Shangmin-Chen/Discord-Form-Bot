@@ -2,15 +2,7 @@
 import os
 import requests
 import json
-import pytz
-import datetime
-
-est = pytz.timezone('US/Eastern')
-now = datetime.datetime.now().astimezone(est)
-d = now.strftime("%d")
-m = now.strftime("%m")
-y = now.strftime("%Y")
-
+from checking_time import m,d,y
 
 KEY = os.environ['APIKEY']
 adate = "{}/{}/{}".format(m,d,y)
@@ -20,6 +12,7 @@ r = requests.get("https://api.nyc.gov/public/api/GetCalendar?fromdate={}&todate=
 
 data = json.loads(r.text)
 status = data["days"][0]["items"][2]["status"]
+reason = data["days"][0]["items"][2]["exceptionName"]
 
 def connect_check():
   if r.status_code == 200:
