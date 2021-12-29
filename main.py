@@ -12,11 +12,14 @@ client = discord.Client()
 
 async def loop():
   # Giving time for the bot to connect.
-  await asyncio.sleep(30)
-
+  while client.get_channel(428729686185476097) == None:
+    await asyncio.sleep(1)
+    if client.get_channel(428729686185476097) != None:
+      channel = client.get_channel(428729686185476097)
+      print(channel)
+      break
   # Constant or init variables
   cool_down = 0
-  channel = client.get_channel(428729686185476097)
   while True:
     try:
       database = db["database"]
