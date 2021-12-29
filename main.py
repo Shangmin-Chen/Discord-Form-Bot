@@ -11,6 +11,9 @@ token = os.environ['TOKEN']
 client = discord.Client()
 
 async def loop():
+  # Giving time for the bot to connect.
+  await asyncio.sleep(30)
+
   # Constant or init variables
   cool_down = 0
   channel = client.get_channel(428729686185476097)
@@ -22,12 +25,15 @@ async def loop():
       exit()
     if check_seven() == 0:
       # it's 7
+      print("7")
       if api.connect_check() == 0:
         # check connection
         if api.status_check() == 1:
-          print("no school")
-          # checks if theres school
-          await channel.send("No school: {}".format(api.reason))
+          if cool_down == 0:
+            # checks if theres school
+            print("no school")
+            await channel.send("No school: {}".format(api.reason))
+            cool_down = 1
         elif api.status_check() == 0:
           if cool_down == 0:
             total_time = Botv2.execute(database)
@@ -56,6 +62,7 @@ async def loop():
         print("not ready")
         await asyncio.sleep(60)
 
+# defining algorithm
 def update_add(fname, lname, email, school):
   if "database" in db.keys():
     database = db["database"]
@@ -76,7 +83,7 @@ def update_del(index):
   else:
     return 1
 
-
+# checking connection
 @client.event
 async def on_ready():
   activity = discord.Game(name="$help", type=3)
@@ -85,6 +92,7 @@ async def on_ready():
   print("We have logged in as {0.user}"
   .format(client))
 
+# defining events functions when bot command is called
 @client.event
 async def on_message(message):
   if message.author == client.user:
