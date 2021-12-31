@@ -28,27 +28,25 @@ async def loop():
       exit()
     if check_seven() == 0:
       # it's 7
-      print("7")
-      if api.connect_check() == 0:
-        # check connection
-        if api.status_check() == 1:
-          if cool_down == 0:
+      if cool_down == 0:
+        # init run
+        if api.connect_check() == 0:
+          # check connection
+          if api.status_check() == 1:
             # checks if theres school
-            print("no school")
             await channel.send("No school: {}".format(api.reason))
-            cool_down = 1
-        elif api.status_check() == 0:
-          if cool_down == 0:
-            total_time = Botv2.execute(database)
-            await channel.send("Rise and Shine! It's 7 AM!\n" + "Total Run Time: " + str(total_time) + " Seconds.")
-            print("running")
             # make it go on cooldown
             cool_down = 1
-      elif api.connect_check() == 111:
-        # if api doesn't work, didn't connect
-        await channel.send("<@249632647473659904> API IS DOWN")
-        # force shutdown
-        exit()
+          elif api.status_check() == 0:
+            total_time = Botv2.execute(database)
+            await channel.send("Rise and Shine! It's 7 AM!\n" + "Total Run Time: " + str(total_time) + " Seconds.")
+            # make it go on cooldown
+            cool_down = 1
+        elif api.connect_check() == 111:
+          # if api doesn't work, didn't connect
+          await channel.send("<@249632647473659904> API IS DOWN")
+          # force shutdown
+          exit()
     else:
       print("not 7")
 
@@ -64,6 +62,7 @@ async def loop():
       else:
         print("not ready")
         await asyncio.sleep(60)
+
 
 # defining algorithm
 def update_add(fname, lname, email, school):

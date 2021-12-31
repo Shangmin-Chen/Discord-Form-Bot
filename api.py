@@ -2,12 +2,13 @@
 import os
 import requests
 import json
-from checking_time import m,d,y
+from checking_time import check_day
 
 KEY = os.environ['APIKEY']
-adate = "{}/{}/{}".format(m,d,y)
-bdate = "{}/{}/{}".format(m,d,y)
-
+m, d, y = check_day()
+adate = "{}/{}/{}".format(m, d, y)
+bdate = "{}/{}/{}".format(m, d, y)
+print(adate)
 r = requests.get("https://api.nyc.gov/public/api/GetCalendar?fromdate={}&todate={}".format(adate, bdate), headers={"Ocp-Apim-Subscription-Key": KEY})
 
 data = json.loads(r.text)
