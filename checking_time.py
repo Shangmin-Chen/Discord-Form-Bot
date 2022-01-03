@@ -1,12 +1,12 @@
 import pytz
 import datetime
 
-def check_seven():
+def check_six():
   est = pytz.timezone('US/Eastern')
   now = datetime.datetime.now().astimezone(est)
 
   current_time = now.strftime("%H")
-  if current_time == "07":
+  if current_time == "06":
     return 0
   else:
     return 1

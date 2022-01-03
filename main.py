@@ -4,7 +4,7 @@ import Botv2
 from replit import db
 from keep_alive import keep_alive
 import asyncio
-from checking_time import check_seven
+from checking_time import check_six
 import api
 
 token = os.environ['TOKEN']
@@ -26,8 +26,8 @@ async def loop():
     except:
       await channel.send("<@249632647473659904> Database Error")
       exit()
-    if check_seven() == 0:
-      # it's 7
+    if check_six() == 0:
+      # it's 6
       if cool_down == 0:
         # init run
         if api.connect_check() == 0:
@@ -39,7 +39,7 @@ async def loop():
             cool_down = 1
           elif api.status_check() == 0:
             total_time = Botv2.execute(database)
-            await channel.send("Rise and Shine! It's 7 AM!\n" + "Total Run Time: " + str(total_time) + " Seconds.")
+            await channel.send("Rise and Shine! It's 6 AM!\n" + "Total Run Time: " + str(total_time) + " Seconds.")
             # make it go on cooldown
             cool_down = 1
         elif api.connect_check() == 111:
@@ -48,16 +48,16 @@ async def loop():
           # force shutdown
           exit()
     else:
-      print("not 7")
+      print("not 6")
 
     if cool_down == 0:
       print("ready")
       await asyncio.sleep(60)
     elif cool_down == 1:
-      if check_seven() == 1:
-        # this makes sure that the code runs once at 7, and goes into cooldown and once it's not 7, it's available again.
+      if check_six() == 1:
+        # this makes sure that the code runs once at 6, and goes into cooldown. Once it's not 6, it goes off cooldown and becomes available again.
         cool_down = 0
-        print("no longer 7")
+        print("no longer 6")
         await asyncio.sleep(60)
       else:
         print("not ready")
