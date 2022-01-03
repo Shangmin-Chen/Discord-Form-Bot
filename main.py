@@ -30,20 +30,20 @@ async def loop():
       # it's 6
       if cool_down == 0:
         # init run
-        if api.connect_check() == 0:
-          # check connection
-          if api.status_check() == 1:
-            # checks if theres school
-            await channel.send("No school: {}".format(api.reason))
-            # make it go on cooldown
-            cool_down = 1
-          elif api.status_check() == 0:
-            total_time = Botv2.execute(database)
-            await channel.send("Rise and Shine! It's 6 AM!\n" + "Total Run Time: " + str(total_time) + " Seconds.")
-            # make it go on cooldown
-            cool_down = 1
-        elif api.connect_check() == 111:
-          # if api doesn't work, didn't connect
+        value, reason, vdate = api.run_api()
+        if value == 1:
+          # checks if theres school
+          await channel.send("Today is {}, No school: {}".format(vdate, api.reason))
+          # make it go on cooldown
+          cool_down = 1
+        elif value == 0:
+          total_time = Botv2.execute(database)
+          await channel.send("Time for school, today is {}\n Total Run Time: {} seconds".format(vdate, str(total_time)))
+          # make it go on cooldown
+          cool_down = 1
+        elif value == 111:
+          # request failed
+          # api doesn't work, didn't connect
           await channel.send("<@249632647473659904> API IS DOWN")
           # force shutdown
           exit()

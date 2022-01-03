@@ -5,29 +5,27 @@ import json
 from checking_time import check_day
 
 KEY = os.environ['APIKEY']
-m, d, y = check_day()
-adate = "{}/{}/{}".format(m, d, y)
-bdate = "{}/{}/{}".format(m, d, y)
 
-r = requests.get("https://api.nyc.gov/public/api/GetCalendar?fromdate={}&todate={}".format(adate, bdate), headers={"Ocp-Apim-Subscription-Key": KEY})
+def run_api():
+  m, d, y = check_day()
+  vdate = "{}/{}/{}".format(m, d, y)
+  r = requests.get("https://api.nyc.gov/public/api/GetCalendar?fromdate={}&todate={}".format(vdate, vdate), headers={"Ocp-Apim-Subscription-Key": KEY})
 
-data = json.loads(r.text)
-status = data["days"][0]["items"][2]["status"]
-reason = data["days"][0]["items"][2]["details"]
+  data = json.loads(r.text)
+  status = data["days"][0]["items"][2]["status"]
+  reason = data["days"][0]["items"][2]["details"]
 
-def connect_check():
   if r.status_code == 200:
     # connected/ good
-    return 0 
+    if status == "NOT IN SESSION" or status == "CLOSED":
+    # closed/ false
+      return 1, reason, vdate
+    else:
+      # school in session/ true
+      return 0, reason, vdate
   else:
     # not connected/ very bad
     return 111
 
-def status_check():
-  if status == "NOT IN SESSION" or status == "CLOSED":
-    # closed/ bad
-    return 1
-  else:
-    # school in session/ good
-    return 0
+  
 
