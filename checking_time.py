@@ -14,7 +14,7 @@ def check_six():
 def check_day():
   est = pytz.timezone('US/Eastern')
   now = datetime.datetime.now().astimezone(est)
-
+  
   d = now.strftime("%d")
   m = now.strftime("%m")
   y = now.strftime("%Y")

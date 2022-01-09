@@ -33,12 +33,12 @@ async def loop():
         value, reason, vdate = api.run_api()
         if value == 1:
           # checks if theres school
-          await channel.send("Today is {}, No school: {}".format(vdate, api.reason))
+          await channel.send("Today is {}, {}, No school: {}".format(vdate, reason))
           # make it go on cooldown
           cool_down = 1
         elif value == 0:
           total_time = Botv2.execute(database)
-          await channel.send("Time for school, today is {}\n Total Run Time: {} seconds".format(vdate, str(total_time)))
+          await channel.send("Time for school, today is {}, {}\n Total Run Time: {} seconds".format(vdate, str(total_time)))
           # make it go on cooldown
           cool_down = 1
         elif value == 111:

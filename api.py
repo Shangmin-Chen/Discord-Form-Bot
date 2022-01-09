@@ -26,6 +26,3 @@ def run_api():
   else:
     # not connected/ very bad
     return 111
-
-  
-
